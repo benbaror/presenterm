@@ -305,21 +305,7 @@ impl ExecIndicator {
 
 impl AsRenderOperations for ExecIndicator {
     fn as_render_operations(&self, _dimensions: &WindowSize) -> Vec<RenderOperation> {
-        let status = self.handle.process_status();
-        let description = match status {
-            Some(ProcessStatus::Running) => Text::new("running", self.theme.running_style),
-            Some(ProcessStatus::Success) => Text::new("finished", self.theme.success_style),
-            Some(ProcessStatus::Failure) => Text::new("finished with error", self.theme.failure_style),
-            None => Text::new("not started", self.theme.not_started_style),
-        };
-
-        let heading = Line(vec![" [".into(), description.clone(), "] ".into()]);
-        let separator = RenderSeparator::new(heading, self.separator_width, self.font_size);
-        vec![
-            RenderOperation::RenderLineBreak,
-            RenderOperation::RenderDynamic(Rc::new(separator)),
-            RenderOperation::RenderLineBreak,
-        ]
+        vec![]
     }
 }
 

@@ -109,6 +109,11 @@ impl AnsiColorParser {
                         style = style.bg_color(color);
                     }
                 }
+                90..=97 => {
+                    if let Some(color) = Self::parse_8bit(next - 90) {
+                        style = style.fg_color(color);
+                    }
+                }
                 _ => (),
             };
         }
@@ -164,42 +169,42 @@ mod tests {
     #[case::two_attributes("\x1b[1;3mhi", Line::from(Text::new("hi", TextStyle::default().bold().italics())))]
     #[case::three_attributes("\x1b[1;3;4mhi", Line::from(Text::new("hi", TextStyle::default().bold().italics().underlined())))]
     #[case::four_attributes(
-        "\x1b[1;3;4;9mhi", 
+        "\x1b[1;3;4;9mhi",
         Line::from(Text::new("hi", TextStyle::default().bold().italics().underlined().strikethrough()))
     )]
     #[case::standard_foreground1(
-        "\x1b[38;5;1mhi", 
+        "\x1b[38;5;1mhi",
         Line::from(Text::new("hi", TextStyle::default().fg_color(Color::DarkRed)))
     )]
     #[case::standard_foreground2(
-        "\x1b[31mhi", 
+        "\x1b[31mhi",
         Line::from(Text::new("hi", TextStyle::default().fg_color(Color::DarkRed)))
     )]
     #[case::rgb_foreground(
-        "\x1b[38;2;3;4;5mhi", 
+        "\x1b[38;2;3;4;5mhi",
         Line::from(Text::new("hi", TextStyle::default().fg_color(Color::new(3, 4, 5))))
     )]
     #[case::standard_background1(
-        "\x1b[48;5;1mhi", 
+        "\x1b[48;5;1mhi",
         Line::from(Text::new("hi", TextStyle::default().bg_color(Color::DarkRed)))
     )]
     #[case::standard_background2(
-        "\x1b[41mhi", 
+        "\x1b[41mhi",
         Line::from(Text::new("hi", TextStyle::default().bg_color(Color::DarkRed)))
     )]
     #[case::rgb_background(
-        "\x1b[48;2;3;4;5mhi", 
+        "\x1b[48;2;3;4;5mhi",
         Line::from(Text::new("hi", TextStyle::default().bg_color(Color::new(3, 4, 5))))
     )]
     #[case::accumulate(
-        "\x1b[1mhi\x1b[3mbye", 
+        "\x1b[1mhi\x1b[3mbye",
         Line(vec![
             Text::new("hi", TextStyle::default().bold()),
             Text::new("bye", TextStyle::default().bold().italics())
         ])
     )]
     #[case::reset(
-        "\x1b[1mhi\x1b[0;3mbye", 
+        "\x1b[1mhi\x1b[0;3mbye",
         Line(vec![
             Text::new("hi", TextStyle::default().bold()),
             Text::new("bye", TextStyle::default().italics())
@@ -218,10 +223,10 @@ mod tests {
     #[rstest]
     #[case::reset_all("\x1b[0mhi", Line::from("hi"))]
     #[case::reset_foreground(
-        "\x1b[39mhi", 
+        "\x1b[39mhi",
         Line::from(
             Text::new(
-                "hi", 
+                "hi",
                 TextStyle::default()
                     .bold()
                     .italics()
@@ -232,10 +237,10 @@ mod tests {
         )
     )]
     #[case::reset_background(
-        "\x1b[49mhi", 
+        "\x1b[49mhi",
         Line::from(
             Text::new(
-                "hi", 
+                "hi",
                 TextStyle::default()
                     .bold()
                     .italics()
