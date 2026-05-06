@@ -253,6 +253,7 @@ impl CoreComponents {
         );
         let third_party_config = ThirdPartyConfigs {
             typst_ppi: config.typst.ppi.to_string(),
+            mermaid_cli: config.mermaid.cli.clone(),
             mermaid_scale: config.mermaid.scale.to_string(),
             mermaid_puppeteer_file: config.mermaid.puppeteer_config_path.clone(),
             mermaid_config_file: config.mermaid.config_path.clone(),
@@ -421,8 +422,8 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
         }
         return Ok(());
     }
-    // Disable this so we don't mess things up when generating PDFs
-    if cli.export_pdf {
+    // Disable this so we don't mess things up when exporting.
+    if cli.export_pdf || cli.export_html {
         TerminalEmulator::disable_capability_detection();
     }
 
